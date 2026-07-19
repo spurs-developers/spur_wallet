@@ -4,9 +4,14 @@
 // crypto precision (BTC 8dp, USDT 6dp) is safe alongside fiat (NGN/USD 2dp).
 import { pgSchema, text, uuid, numeric, timestamp, index, uniqueIndex } from "drizzle-orm/pg-core";
 
-// Minimal ref to the shared user table (owned by baas) for the FK only.
+// Ref to the shared user table (owned by baas). The Wallet upserts id/name/email
+// on SSO login so its foreign keys resolve; other columns are managed elsewhere.
 const spurs = pgSchema("spurs");
-export const spursUsers = spurs.table("users", { id: text("id").primaryKey() });
+export const spursUsers = spurs.table("users", {
+  id: text("id").primaryKey(),
+  name: text("name"),
+  email: text("email"),
+});
 
 export const wallet = pgSchema("wallet");
 
