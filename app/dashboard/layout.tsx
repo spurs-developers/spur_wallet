@@ -1,4 +1,5 @@
 import { requireUser } from "@/lib/auth";
+import { getVirtualAccount } from "@/lib/virtual-account";
 import Sidebar from "@/components/Sidebar";
 import AddMoney from "@/components/AddMoney";
 import AccountMenu from "@/components/AccountMenu";
@@ -6,6 +7,8 @@ import { Wallet } from "lucide-react";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
+  const va = await getVirtualAccount(user.sub);
+  const account = va ? { bankName: va.bankName, accountNumber: va.accountNumber, accountName: va.accountName } : null;
 
   return (
     <div className="min-h-screen flex-1 bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
@@ -18,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             Spurs Wallet
           </span>
           <div className="ml-auto flex items-center gap-3">
-            <AddMoney />
+            <AddMoney account={account} />
             <AccountMenu name={user.name} email={user.email} />
           </div>
         </header>

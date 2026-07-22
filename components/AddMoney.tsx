@@ -1,14 +1,40 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Landmark, Copy, Check } from "lucide-react";
 import { ASSETS } from "@/lib/assets";
 import { startTopupAction } from "@/app/dashboard/actions";
 
 const FIAT = Object.values(ASSETS).filter((a) => a.kind === "fiat");
 const QUICK = [1000, 5000, 10000, 25000];
 
-export default function AddMoney() {
+interface DedicatedAccount {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+}
+
+function CopyRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="flex items-center justify-between px-3 py-2.5">
+      <span className="text-xs text-neutral-500">{label}</span>
+      <button
+        onClick={() => {
+          navigator.clipboard?.writeText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        }}
+        className={`flex items-center gap-1.5 text-sm font-medium ${mono ? "font-mono" : ""}`}
+      >
+        {value}
+        {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} className="text-neutral-400" />}
+      </button>
+    </div>
+  );
+}
+
+export default function AddMoney({ account }: { account?: DedicatedAccount | null }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
 
@@ -33,7 +59,30 @@ export default function AddMoney() {
                 <X size={16} />
               </button>
             </div>
-            <p className="mt-1 text-sm text-neutral-500">Top up with card, bank transfer or USSD via Spurs Pay.</p>
+            <p className="mt-1 text-sm text-neutral-500">Transfer to your dedicated account, or pay with card.</p>
+
+            {account && (
+              <div className="mt-4">
+                <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                  <Landmark size={13} /> Your dedicated account
+                </div>
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20">
+                  <div className="divide-y divide-emerald-100 dark:divide-emerald-900/40">
+                    <CopyRow label="Bank" value={account.bankName} />
+                    <CopyRow label="Account number" value={account.accountNumber} mono />
+                    <CopyRow label="Account name" value={account.accountName} />
+                  </div>
+                </div>
+                <p className="mt-1.5 text-xs text-neutral-400">
+                  Any transfer to this account tops up your wallet automatically.
+                </p>
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+                  <span className="text-xs text-neutral-400">or pay with card</span>
+                  <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+                </div>
+              </div>
+            )}
 
             <form action={startTopupAction} className="mt-5 space-y-4">
               <div>

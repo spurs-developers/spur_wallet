@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSpursUser, spurs } from "@spurs-cloud/accounts/next";
 import type { SpursUser } from "@spurs-cloud/accounts";
 import { db, spursUsers } from "@/lib/db";
+import { ensureVirtualAccount } from "@/lib/virtual-account";
 
 /**
  * Auth is the shared Spurs session — one cookie issued by accounts covers every
@@ -30,5 +31,15 @@ export async function requireUser(): Promise<Session> {
   const user = await getSession();
   if (!user) redirect(spurs().loginUrl(`${process.env.APP_URL}/dashboard`));
   await ensureSpursUser(user);
+
+  // Give every wallet user a dedicated bank-transfer account (idempotent).
+  // Best-effort: if Pay is unreachable, the wallet still works — the account
+  // is provisioned on a later visit.
+  try {
+    await ensureVirtualAccount(user.sub, user.name ?? user.email ?? "Spurs user");
+  } catch {
+    /* provisioning is retried on the next request */
+  }
+
   return user;
 }

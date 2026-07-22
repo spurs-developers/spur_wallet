@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { accounts, transactions, type Transaction } from "@/lib/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte } from "drizzle-orm";
 import { randomBytes } from "node:crypto";
 import { isAsset } from "@/lib/assets";
 
@@ -33,6 +33,22 @@ export async function getBalance(userId: string, asset: string): Promise<string>
     .where(and(eq(accounts.userId, userId), eq(accounts.asset, asset)))
     .limit(1);
   return row?.balance ?? "0";
+}
+
+/** Total sent out today in an asset (minor units) — drives daily send limits. */
+export async function sentTodayMinor(userId: string, asset: string): Promise<bigint> {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const rows = await db
+    .select({ amount: transactions.amount })
+    .from(transactions)
+    .where(and(
+      eq(transactions.userId, userId),
+      eq(transactions.asset, asset),
+      eq(transactions.source, "transfer_out"),
+      gte(transactions.createdAt, start),
+    ));
+  return rows.reduce((sum, r) => sum + BigInt(r.amount), 0n);
 }
 
 export async function listTransactions(userId: string, opts: { asset?: string; limit?: number } = {}) {

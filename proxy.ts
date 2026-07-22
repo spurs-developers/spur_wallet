@@ -1,10 +1,10 @@
 import { createSpursProxy } from "@spurs-cloud/accounts/next";
 
 // Gate the wallet behind the shared Spurs session. The landing, login bounce,
-// SSO handlers and the private service API stay public.
+// SSO handlers, the private service API and provider webhooks stay public.
 // (Next 16 renamed the `middleware` convention to `proxy`.)
 export const proxy = createSpursProxy({
-  publicPaths: ["/", "/login", "/auth/", "/api/private/"],
+  publicPaths: ["/", "/login", "/auth/", "/api/private/", "/api/webhooks/"],
 });
 
 export const config = {

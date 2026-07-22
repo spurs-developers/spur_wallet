@@ -1,15 +1,20 @@
 import { requireUser } from "@/lib/auth";
 import { getBalances } from "@/lib/wallet";
 import { ASSETS, formatAsset } from "@/lib/assets";
-import { rate } from "@/lib/fx";
+import { marketRates } from "@/lib/convert";
+import { getWalletSettings } from "@/lib/settings";
 import { Card, PageHeader } from "@/components/wallet-ui";
 import { convertAction } from "../actions";
+
+export const dynamic = "force-dynamic";
 
 export default async function ConvertPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
   const user = await requireUser();
   const { ok, error } = await searchParams;
-  const balances = await getBalances(user.sub);
-  const codes = Object.keys(ASSETS);
+  const [balances, settings] = await Promise.all([getBalances(user.sub), getWalletSettings()]);
+  // Only offer assets the platform currently enables.
+  const codes = Object.keys(ASSETS).filter((c) => settings.enabledAssets.includes(c));
+  const rates = await marketRates([["NGN", "USD"], ["USD", "NGN"], ["USD", "BTC"], ["USDT", "NGN"]]);
 
   return (
     <div className="max-w-lg">
@@ -47,12 +52,17 @@ export default async function ConvertPage({ searchParams }: { searchParams: Prom
       </Card>
 
       <div className="mt-6">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">Indicative rates</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">Live rates</h2>
+          <span className="text-xs text-neutral-400">
+            {settings.convertFeePercent > 0 ? `${settings.convertFeePercent}% conversion fee applies` : "No conversion fee"}
+          </span>
+        </div>
         <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
-          {[["NGN", "USD"], ["USD", "NGN"], ["USD", "BTC"], ["USDT", "NGN"]].map(([f, t]) => (
-            <div key={f + t} className="flex justify-between rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800">
-              <span className="text-neutral-500">1 {f}</span>
-              <span className="font-medium">{rate(f, t).toLocaleString("en-US", { maximumFractionDigits: 8 })} {t}</span>
+          {rates.map((r) => (
+            <div key={r.from + r.to} className="flex justify-between rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800">
+              <span className="text-neutral-500">1 {r.from}</span>
+              <span className="font-medium">{r.rate.toLocaleString("en-US", { maximumFractionDigits: 8 })} {r.to}</span>
             </div>
           ))}
         </div>
