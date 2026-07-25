@@ -7,7 +7,11 @@ import { isAsset } from "@/lib/assets";
 export type Source =
   | "top_up" | "gift_card" | "crypto_deposit"
   | "payment" | "withdrawal"
-  | "transfer_in" | "transfer_out" | "conversion";
+  | "transfer_in" | "transfer_out" | "conversion"
+  // Earnings paid in from Spurs Earn. Deliberately distinct from a deposit:
+  // it's income, not money the user funded, and tasks that require a real
+  // deposit must not be satisfied by it.
+  | "task_reward";
 
 interface EntryOpts {
   source: Source;
