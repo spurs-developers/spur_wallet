@@ -29,7 +29,8 @@ async function ensureSpursUser(user: SpursUser): Promise<void> {
 /** Like getSession but bounces to Spurs Accounts when signed out. */
 export async function requireUser(): Promise<Session> {
   const user = await getSession();
-  if (!user) redirect(spurs().loginUrl(`${process.env.APP_URL}/dashboard`));
+  const returnTo = `${process.env.APP_URL ?? "https://wallet.spurs.com.ng"}/dashboard`;
+  if (!user) redirect(spurs().loginUrl(returnTo));
   await ensureSpursUser(user);
 
   // Give every wallet user a dedicated bank-transfer account (idempotent).
