@@ -41,3 +41,4 @@ jobs:
           local-dir: ./.next/standalone/
           server-dir: /
           protocol: ftps
+          dangerous-clean-slate: false
