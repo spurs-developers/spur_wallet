@@ -21,10 +21,10 @@ jobs:
       # Standalone doesn't include static assets or public/ — add them
       - name: Assemble standalone output
         run: |
-          if [ -d public ]; then
-            cp -r public .next/standalone/public
+          if [ -d "public" ]; then
+            cp -R public .next/standalone/public
           fi
-          cp -r .next/static .next/standalone/.next/static
+          cp -R .next/static .next/standalone/.next/static
 
       # Passenger restarts when it sees an updated tmp/restart.txt
       - name: Add restart trigger
@@ -41,4 +41,3 @@ jobs:
           local-dir: ./.next/standalone/
           server-dir: /
           protocol: ftps
-          dangerous-clean-slate: false
