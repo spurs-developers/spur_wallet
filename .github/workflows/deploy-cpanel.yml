@@ -25,12 +25,16 @@ jobs:
             cp -R public .next/standalone/public
           fi
           cp -R .next/static .next/standalone/.next/static
+          cp server.js .next/standalone/server.js
+          cp .env.production .next/standalone/.env.production
+          cp package.json .next/standalone/package.json
 
       # Passenger restarts when it sees an updated tmp/restart.txt
       - name: Add restart trigger
         run: |
           mkdir -p .next/standalone/tmp
           date > .next/standalone/tmp/restart.txt
+          printf '%s\n' 'server.js' > .next/standalone/passenger.cjs
 
       - name: Deploy via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
