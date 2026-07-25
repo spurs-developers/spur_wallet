@@ -22,9 +22,9 @@ jobs:
       - name: Assemble standalone output
         run: |
           if [ -d "public" ]; then
-            cp -R public .next/standalone/public
+            cp -r public .next/standalone/public
           fi
-          cp -R .next/static .next/standalone/.next/static
+          cp -r .next/static .next/standalone/.next/static
 
       # Passenger restarts when it sees an updated tmp/restart.txt
       - name: Add restart trigger
