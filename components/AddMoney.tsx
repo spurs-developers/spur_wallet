@@ -47,7 +47,7 @@ export default function AddMoney({ account }: { account?: DedicatedAccount | nul
         onClick={() => setOpen(true)}
         className="flex h-9 items-center gap-2 rounded-lg bg-emerald-600 px-3.5 text-sm font-medium text-white transition hover:bg-emerald-700"
       >
-        <Plus size={16} /> Add money
+        <Plus size={16} /> <span className="hidden md:block">Add money</span>
       </button>
 
       <Modal open={open} onClose={() => setOpen(false)} titleId={titleId}>
