@@ -25,7 +25,6 @@ jobs:
             cp -R public .next/standalone/public
           fi
           cp -R .next/static .next/standalone/.next/static
-          cp server.js .next/standalone/server.js
           cp .env.production .next/standalone/.env.production
           cp package.json .next/standalone/package.json
 
