@@ -5,7 +5,7 @@ import { useId, useState } from "react";
 import { Plus, X, Landmark, Copy, Check } from "lucide-react";
 import { ASSETS } from "@/lib/assets";
 import { startTopupAction } from "@/app/dashboard/actions";
-import Modal from "@/components/Modal";
+import Modal from "./Modal";
 
 const FIAT = Object.values(ASSETS).filter((a) => a.kind === "fiat");
 const QUICK = [1000, 5000, 10000, 25000];
