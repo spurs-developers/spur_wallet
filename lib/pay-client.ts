@@ -4,7 +4,7 @@
 import { SpursPayInternal } from "@spurs-cloud/pay";
 
 // PAY_INTERNAL_URL overrides the SDK's baked-in production URL for local dev.
-const pay = () => new SpursPayInternal({ baseUrl: process.env.PAY_INTERNAL_URL });
+const pay = () => new SpursPayInternal({ baseUrl: process.env.PAY_INTERNAL_URL, internalSecret: process.env.INTERNAL_API_SECRET });
 
 export interface PayPayment {
   reference: string;
