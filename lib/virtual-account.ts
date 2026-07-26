@@ -1,5 +1,6 @@
 import { db, virtualAccounts, type VirtualAccount } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { getUserBvn } from "./accounts-client";
 import { creditOnce } from "@/lib/wallet";
 
 // The Wallet doesn't own a bank relationship — Spurs Pay does. So we ask Pay to
@@ -21,11 +22,12 @@ export async function ensureVirtualAccount(userId: string, customerName: string)
   const existing = await getVirtualAccount(userId);
   if (existing) return existing;
 
+  const bvn = await getUserBvn(userId);
   const res = await fetch(`${PAY_URL}/api/private/virtual-accounts`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-internal-secret": SECRET },
     cache: "no-store",
-    body: JSON.stringify({ reference: userId, customerName, mode: "live" }),
+    body: JSON.stringify({ reference: userId, customerName, mode: "live", ...(bvn ? { bvn } : {}) }),
   });
   if (!res.ok) throw new Error("Could not provision a funding account");
   const { data } = await res.json();
