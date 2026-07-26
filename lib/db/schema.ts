@@ -60,6 +60,8 @@ export const virtualAccounts = wallet.table("virtual_accounts", {
   accountNumber: text("account_number").notNull().unique(),
   accountName: text("account_name").notNull(),
   currency: text("currency").notNull().default("NGN"),
+  provider: text("provider"),
+  providerRef: text("provider_ref"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

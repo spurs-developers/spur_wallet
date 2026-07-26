@@ -37,6 +37,8 @@ export async function ensureVirtualAccount(userId: string, customerName: string)
       bankName: data.bankName,
       accountNumber: data.accountNumber,
       accountName: data.accountName,
+      provider: data.provider ?? "sandbox",
+      providerRef: data.providerRef ?? null,
     })
     .onConflictDoNothing({ target: virtualAccounts.userId })
     .returning();
