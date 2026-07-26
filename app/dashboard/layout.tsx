@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { getVirtualAccount } from "@/lib/virtual-account";
 import Sidebar from "@/components/Sidebar";
+import MobileNav from "@/components/MobileNav";
 import AddMoney from "@/components/AddMoney";
 import AccountMenu from "@/components/AccountMenu";
 import { Wallet } from "lucide-react";
@@ -16,10 +17,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       <div className="flex min-h-screen flex-col md:pl-60">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-neutral-200 bg-white/90 px-5 backdrop-blur sm:px-8 dark:border-neutral-800 dark:bg-neutral-950/90">
-          <span className="flex items-center gap-2 font-semibold md:hidden">
-            <span className="grid h-6 w-6 place-items-center rounded-md bg-emerald-600 text-white"><Wallet size={13} /></span>
-            Spurs Wallet
-          </span>
+          <div className="flex items-center gap-2 md:hidden">
+            <MobileNav />
+            <span className="flex items-center gap-2 font-semibold">
+              <span className="grid h-6 w-6 place-items-center rounded-md bg-emerald-600 text-white"><Wallet size={13} /></span>
+              Spurs Wallet
+            </span>
+          </div>
           <div className="ml-auto flex items-center gap-3">
             <AddMoney account={account} />
             <AccountMenu name={user.name} email={user.email} />
