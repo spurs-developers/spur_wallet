@@ -11,7 +11,10 @@ export type Source =
   // Earnings paid in from Spurs Earn. Deliberately distinct from a deposit:
   // it's income, not money the user funded, and tasks that require a real
   // deposit must not be satisfied by it.
-  | "task_reward";
+  | "task_reward"
+  // Platform-granted bonuses from Spurs Accounts (referral reward, first-deposit
+  // bonus). Like task_reward these are income, not user-funded money.
+  | "referral_bonus" | "signup_bonus";
 
 interface EntryOpts {
   source: Source;

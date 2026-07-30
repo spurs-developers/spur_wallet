@@ -12,7 +12,7 @@ const Schema = z.object({
   user: z.string().min(1),
   asset: z.string(),
   amount: z.number().int().positive(),
-  source: z.enum(["task_reward", "gift_card", "top_up", "transfer_in", "crypto_deposit"]).optional(),
+  source: z.enum(["task_reward", "gift_card", "top_up", "transfer_in", "crypto_deposit", "referral_bonus", "signup_bonus"]).optional(),
   reference: z.string().min(3),
   description: z.string().max(200).optional(),
 });
