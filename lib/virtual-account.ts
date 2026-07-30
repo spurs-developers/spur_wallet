@@ -2,6 +2,7 @@ import { db, virtualAccounts, type VirtualAccount } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { getUserBvn } from "./accounts-client";
 import { creditOnce } from "@/lib/wallet";
+import { maybeAwardFirstDeposit } from "@/lib/bonus";
 
 // The Wallet doesn't own a bank relationship — Spurs Pay does. So we ask Pay to
 // provision a dedicated NUBAN through whichever processor the admin has chosen
@@ -66,5 +67,6 @@ export async function creditVirtualAccountDeposit(
     relatedRef: bankReference,
     description: "Bank transfer",
   });
+  await maybeAwardFirstDeposit(va.userId, va.currency, amount);
   return { credited: true, userId: va.userId };
 }

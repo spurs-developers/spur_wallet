@@ -18,6 +18,11 @@ export interface WalletSettings {
   sendFeeFlatMinor: bigint;    // NGN minor units
   convertFeePercent: number;
   kycRequired: boolean;
+  // First-deposit bonus: credited once, the first time a user funds their
+  // wallet with a qualifying deposit. Amounts in NGN minor units.
+  firstDepositBonusEnabled: boolean;
+  firstDepositBonusMinor: bigint;
+  firstDepositBonusMinMinor: bigint;
 }
 
 const bool = (v: string | undefined, d: boolean) => (v == null ? d : v === "true" || v === "1" || v === "on");
@@ -41,6 +46,9 @@ export async function getWalletSettings(): Promise<WalletSettings> {
     sendFeeFlatMinor: BigInt(Math.round(num(c.WALLET_SEND_FEE_FLAT, 0) * 100)),
     convertFeePercent: num(c.WALLET_CONVERT_FEE_PERCENT, 0.5),
     kycRequired: bool(c.WALLET_KYC_REQUIRED, false),
+    firstDepositBonusEnabled: bool(c.WALLET_FIRST_DEPOSIT_BONUS_ENABLED, false),
+    firstDepositBonusMinor: BigInt(Math.round(num(c.WALLET_FIRST_DEPOSIT_BONUS, 0) * 100)),
+    firstDepositBonusMinMinor: BigInt(Math.round(num(c.WALLET_FIRST_DEPOSIT_BONUS_MIN, 0) * 100)),
   };
 }
 

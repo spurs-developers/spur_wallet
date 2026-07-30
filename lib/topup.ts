@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { createPayPayment, getPayPayment } from "@/lib/pay-client";
 import { creditOnce } from "@/lib/wallet";
+import { maybeAwardFirstDeposit } from "@/lib/bonus";
 import { getAsset, DEFAULT_ASSET } from "@/lib/assets";
 
 // Shared top-up logic, used by both the private API (accounts/baas) and the
@@ -48,5 +49,6 @@ export async function finalizeTopup(reference: string): Promise<FinalizeResult> 
     relatedRef: reference,
     description: "Wallet top-up",
   });
+  await maybeAwardFirstDeposit(user, asset, payment.amount);
   return { status: "successful", credited: true, asset, amount: payment.amount };
 }
